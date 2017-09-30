@@ -4,7 +4,7 @@ import paramiko
 from scp import SCPClient
 import config
 
-count = 25
+count = 30
 
 manager = digitalocean.Manager(token=config.token)
 keys = manager.get_all_sshkeys()
@@ -43,7 +43,7 @@ for idx, droplet in enumerate(droplets):
     scp = SCPClient(c.get_transport())
     scp.put('virus.py', '/virus.py')
 
-    i, o, e = c.exec_command("nohup python3 /virus.py %s &" % idx)
+    i, o, e = c.exec_command("nohup python3 /virus.py %s &" % str(idx))
     print('Done with droplet')
 
 time.sleep(20)
