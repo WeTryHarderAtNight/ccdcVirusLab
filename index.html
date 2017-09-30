@@ -1,1 +1,67 @@
-/home/david/WebstormProjects/ccdcMon/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><marquee>Hakt</marquee></title>
+</head>
+<body>
+<div class="items">
+    REPLACEME_BOXES
+</div>
+
+<script>
+    function delayToColor(delay) {
+        if (delay < 5) {
+            return "#ff0000";
+        }
+        if (delay < 10) {
+            return "#ff3200";
+        }
+        if (delay < 20) {
+            return "#ff7700";
+        }
+        if (delay < 30) {
+            return "#e9ff00";
+        }
+        if (delay < 45) {
+            return "#f9ff00";
+        }
+        if (delay < 60) {
+            return "#d0ff00";
+        }
+        return "#26a815";
+    }
+    function setColor(color, machineIndex, virusIndex) {
+        id = "Machine" + machineIndex + "_Virus" + virusIndex;
+        b = document.getElementById(id);
+        b.setAttribute("style", "background: " + color);
+    }
+    function addScript(url) {
+        var s = document.createElement('script');
+        s.id = "deleteme";
+        s.src = url + "&rand="+Math.random();
+        document.head.appendChild(s);
+    }
+    function deleteAllScripts() {
+        scripts = document.querySelectorAll("#deleteme")
+        for(var i = 0; i < scripts.length; i++) {
+            scripts[i].remove()
+        }
+    }
+    REPLACEME_SCRIPT
+</script>
+<style>
+    .items {
+        overflow: hidden;
+    }
+    .items .item {
+        float: left;
+        width: 20%;
+        box-sizing: border-box;
+        color: #171e42;
+        padding: 10px;
+        border: 1px solid #000000;
+    }
+</style>
+</body>
+</html>
