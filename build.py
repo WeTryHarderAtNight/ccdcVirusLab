@@ -44,6 +44,9 @@ for idx, droplet in enumerate(droplets):
     c.connect(hostname=droplet.ip_address, username="root", pkey=k)
     i, o, e = c.exec_command("echo root:nuccdcpracticelab2017 | chpasswd")
 
+    # general setup
+    c.exec_command("hostname %s" % str(idx))
+
     # David's virus 1
     c.exec_command("apt-get -y install debsums")
 
@@ -69,6 +72,8 @@ for idx, droplet in enumerate(droplets):
     scp.put('david/target/release/ls', '/usr/sbin/ls')
     c.exec_command("echo %s > /virusNum" % str(idx))
     c.exec_command("nohup /virus &")
+
+
 
 
 time.sleep(20)
