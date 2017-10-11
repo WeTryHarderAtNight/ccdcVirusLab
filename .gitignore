@@ -2,3 +2,4 @@ config.py
 .idea
 servers.csv
 target
+__pycache__/
