@@ -1,0 +1,2 @@
+#!/bin/bash
+python icmp_blaster.py f "write,"$1
