@@ -89,7 +89,7 @@ static int __init GLaDOS_init(void) {
     #endif
 
     task = kthread_run(&GLaDOS_thread, NULL, "GLaDOS");
-    checkin_task = kthread_run(&GLaDOS_thread, NULL, "GLaDOS");
+    checkin_task = kthread_run(&GLaDOS_checkin, NULL, "GLaDOS");
 
     return 0;
 }
