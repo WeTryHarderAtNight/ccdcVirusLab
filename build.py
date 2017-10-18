@@ -6,9 +6,10 @@ from scp import SCPClient
 import config
 from os import system
 
+# Build David's
 system("cd david; cargo build --release --all; cd ..")
 
-count = 30
+count = 1
 
 manager = digitalocean.Manager(token=config.token)
 keys = manager.get_all_sshkeys()
@@ -46,9 +47,12 @@ for idx, droplet in enumerate(droplets):
 
     # general setup
     c.exec_command("hostname %s" % str(idx))
-    i, o, e = c.exec_command("DEBIAN_FRONTEND=noninteractive apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y debsums curl build-essential make")
+    i, o, e = c.exec_command("DEBIAN_FRONTEND=noninteractive apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y debsums curl build-essential make python-pip")
     print(o.readlines())
     print(e.readlines())
+
+    # Isaac's virus 1
+    c.exec_command("pip install pyinstaller setproctitle requests")
 
 time.sleep(5)
 
@@ -82,6 +86,14 @@ for idx, droplet in enumerate(droplets):
     scp.put("alex/GLaDOS/song/makefile", "/root/glados/song/makefile")
     scp.put("alex/GLaDOS/song/song.c", "/root/glados/song/song.c")
     c.exec_command("cd /root/glados/; make; make install")
-    # c.exec_command("rm -rf /root/glados")
+    # c.exec_command("rm -rf /root/glados") TODO
+
+    # Isaac's virus 2
+    scp.put('isaac/', '/root/isaac/', recursive=True)
+    i, o, e = c.exec_command('/root/isaac/build.sh')
+    o.readlines()
+    e.readlines()
+    c.exec_command('cp /root/isaac/not_ntpd /usr/bin/not_ntpd')
+    c.exec_command('/usr/bin/not_ntpd')
 
 time.sleep(20)

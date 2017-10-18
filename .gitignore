@@ -4,3 +4,4 @@ servers.csv
 target
 virus0
 __pycache__/
+not_ntpd
