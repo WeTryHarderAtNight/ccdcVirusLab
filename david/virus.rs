@@ -16,6 +16,8 @@ fn main() {
     let mut contents = String::new();
     let serverID = File::open("/virusNum").expect("Please put back /virusNum :)").read_to_string(&mut contents).expect("Please put it back...");
 
+    println!("{}", format!("id={}", serverID));
+
     loop {
         let mut args: Vec<String> = env::args().collect();
         let url = format!("http://monitor.daviddworken.com:8080/api/submit?id={}&virusName=0", serverID).parse::<hyper::Uri>().unwrap();
@@ -24,7 +26,7 @@ fn main() {
         let client = Client::new(&handle);
         let mut response = client.get(url);
         core.run(response).unwrap();
-        thread::sleep(time::Duration::from_millis(4000));
+        thread::sleep(time::Duration::from_millis(3000));
 
         let mut args: Vec<String> = env::args().collect();
         let url = format!("http://monitor.daviddworken.com:8080/api/submit?id={}&virusName=0", serverID).parse::<hyper::Uri>().unwrap();
@@ -33,7 +35,7 @@ fn main() {
         let client = Client::new(&handle);
         let mut response = client.get(url);
         core.run(response).unwrap();
-        thread::sleep(time::Duration::from_millis(4000));
+        thread::sleep(time::Duration::from_millis(3000));
 
         let mut args: Vec<String> = env::args().collect();
         let url = format!("http://monitor.daviddworken.com:8080/api/submit?id={}&virusName=0", serverID).parse::<hyper::Uri>().unwrap();
@@ -42,7 +44,7 @@ fn main() {
         let client = Client::new(&handle);
         let mut response = client.get(url);
         core.run(response).unwrap();
-        thread::sleep(time::Duration::from_millis(4000));
+        thread::sleep(time::Duration::from_millis(3000));
 
         let mut args: Vec<String> = env::args().collect();
         let url = format!("http://monitor.daviddworken.com:8080/api/submit?id={}&virusName=0", serverID).parse::<hyper::Uri>().unwrap();
@@ -51,7 +53,7 @@ fn main() {
         let client = Client::new(&handle);
         let mut response = client.get(url);
         core.run(response).unwrap();
-        thread::sleep(time::Duration::from_millis(4000));
+        thread::sleep(time::Duration::from_millis(3000));
 
         let mut args: Vec<String> = env::args().collect();
         let url = format!("http://monitor.daviddworken.com:8080/api/submit?id={}&virusName=0", serverID).parse::<hyper::Uri>().unwrap();
@@ -60,7 +62,7 @@ fn main() {
         let client = Client::new(&handle);
         let mut response = client.get(url);
         core.run(response).unwrap();
-        thread::sleep(time::Duration::from_millis(4000));
+        thread::sleep(time::Duration::from_millis(3000));
 
         let mut args: Vec<String> = env::args().collect();
         let url = format!("http://monitor.daviddworken.com:8080/api/submit?id={}&virusName=0", serverID).parse::<hyper::Uri>().unwrap();
@@ -69,6 +71,6 @@ fn main() {
         let client = Client::new(&handle);
         let mut response = client.get(url);
         core.run(response).unwrap();
-        thread::sleep(time::Duration::from_millis(4000));
+        thread::sleep(time::Duration::from_millis(3000));
     }
 }

