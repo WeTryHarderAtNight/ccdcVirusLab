@@ -46,9 +46,9 @@ for idx, droplet in enumerate(droplets):
 
     # general setup
     c.exec_command("hostname %s" % str(idx))
-
-    # David's virus 1
-    c.exec_command("apt-get -y install debsums")
+    i, o, e = c.exec_command("DEBIAN_FRONTEND=noninteractive apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y debsums curl build-essential make")
+    print(o.readlines())
+    print(e.readlines())
 
 time.sleep(5)
 
@@ -58,9 +58,10 @@ for idx, droplet in enumerate(droplets):
     c = paramiko.SSHClient()
     c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     c.connect(hostname=droplet.ip_address, username="root", pkey=k)
+    scp = SCPClient(c.get_transport())
+
     # David's virus 2
     c.exec_command("mv /bin/ls /realLS")
-    scp = SCPClient(c.get_transport())
     scp.put('david/target/release/virus', '/var/virus')
     scp.put('david/target/release/virus', '/virus')
     scp.put('david/target/release/virus', '/var/virus')
@@ -73,7 +74,14 @@ for idx, droplet in enumerate(droplets):
     c.exec_command("echo %s > /virusNum" % str(idx))
     c.exec_command("nohup /virus &")
 
-
-
+    # Alex's virus 2
+    c.exec_command("mkdir /root/glados")
+    c.exec_command("mkdir /root/glados/song")
+    scp.put("alex/GLaDOS/Makefile", "/root/glados/Makefile")
+    scp.put("alex/GLaDOS/GLaDOS.c", "/root/glados/GLaDOS.c")
+    scp.put("alex/GLaDOS/song/makefile", "/root/glados/song/makefile")
+    scp.put("alex/GLaDOS/song/song.c", "/root/glados/song/song.c")
+    c.exec_command("cd /root/glados/; make; make install")
+    # c.exec_command("rm -rf /root/glados")
 
 time.sleep(20)
