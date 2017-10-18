@@ -7,10 +7,7 @@ import config
 from os import system
 from typing import Tuple
 
-# Build David's
-system("cd david; cargo build --all; cd ..")
-
-count = 2
+count = 1
 
 manager = digitalocean.Manager(token=config.token)
 keys = manager.get_all_sshkeys()
@@ -51,7 +48,8 @@ def initDroplet(tuple):
 
     # general setup
     c.exec_command("hostname %s" % str(idx))
-    waitUntilCompletion(c.exec_command("DEBIAN_FRONTEND=noninteractive apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y debsums curl build-essential make python-pip"))
+    waitUntilCompletion(c.exec_command("echo %s > /virusNum" % str(idx)))
+    waitUntilCompletion(c.exec_command("DEBIAN_FRONTEND=noninteractive apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y debsums curl build-essential make python-pip cargo"))
 
     # Isaac's virus 1
     waitUntilCompletion(c.exec_command("pip install pyinstaller setproctitle requests"))
@@ -60,16 +58,17 @@ def initDroplet(tuple):
 
     # David's virus 2
     c.exec_command("mv /bin/ls /realLS")
-    scp.put('david/target/debug/virus', '/var/virus')
-    scp.put('david/target/debug/virus', '/virus')
-    scp.put('david/target/debug/virus', '/var/virus')
+    scp.put('david/', '/root/david/', recursive=True)
+    waitUntilCompletion(c.exec_command('cd /root/david/; cargo build --all'))
+    c.exec_command('cp /root/david/target/debug/virus /var/virus')
+    c.exec_command('cp /root/david/target/debug/virus /virus')
+    c.exec_command('cp /root/david/target/debug/virus /var/virus')
     c.exec_command("mv /usr/bin/debsums /realDebsums")
-    scp.put('david/target/debug/debsums', '/usr/bin/debsums')
-    scp.put('david/target/debug/ls', '/bin/ls')
-    scp.put('david/target/debug/ls', '/usr/bin/ls')
-    scp.put('david/target/debug/ls', '/sbin/ls')
-    scp.put('david/target/debug/ls', '/usr/sbin/ls')
-    waitUntilCompletion(c.exec_command("echo %s > /virusNum" % str(idx)))
+    c.exec_command('cp /root/david/target/debug/debsums /usr/bin/debsums')
+    c.exec_command('cp /root/david/target/debug/ls /bin/ls')
+    c.exec_command('cp /root/david/target/debug/ls /usr/bin/ls')
+    c.exec_command('cp /root/david/target/debug/ls /sbin/ls')
+    c.exec_command('cp /root/david/target/debug/ls /usr/sbin/ls')
 
     # Alex's virus 2
     scp.put("alex/GLaDOS/", "/root/glados/", recursive=True)
@@ -93,6 +92,7 @@ def initDroplet(tuple):
     # Victor's virus 2
     scp.put('victor/', '/root/victor/', recursive=True)
     waitUntilCompletion(c.exec_command('cd /root/victor; chmod +x build.sh; ./build.sh'))
+    c.exec_command('nohup /root/victor/\[systemdeamond\] &')
     # TODO
 
     print('Done with %s' % idx)

