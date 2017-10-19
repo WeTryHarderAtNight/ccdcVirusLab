@@ -28,7 +28,7 @@ while 1:
     
     """
     
-    cmd = "cat << 'EOF' > ./imstillhere\n" + groot
+    cmd = "cat << 'EOF' > /root/imstillhere\n" + groot
     
     os.system(cmd)
     sleep(15)
