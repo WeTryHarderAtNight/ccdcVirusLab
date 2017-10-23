@@ -1,4 +1,8 @@
 #!/usr/bin/python
+
+# This script simply creates a file in the root directory if it is not already there.
+# It is spawned by the [systemdeamond] process/virus, which restarts it if it is killed.
+
 import os
 from time import sleep
 

