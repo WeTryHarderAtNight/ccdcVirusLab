@@ -9,3 +9,8 @@ index.html and server.py are the monitoring webserver (server.py also relies on 
 virus.py is an example virus
 
 All the directories contain each individual's virus. 
+
+
+## Lab
+
+For this lab, the team wrote various pieces of malware and ran them on virtual servers. Participants were tasked with removing the malware. All **viruses** call out to the monitoring interface (currently hardcoded), allowing participants to track their progress.
