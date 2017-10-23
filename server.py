@@ -46,7 +46,7 @@ def getSlash():
     for machineIndex in range(machineCount):
         machineHTML += "<div class=\"item\"><h2>Machine %s</h2>" % machineIndex
         for virusIndex in range(virusCount):
-            machineHTML += """<div class="" id="Machine%s_Virus%s" style="background: #ff0000"><center>Virus%s</center></div>\n<br>\n""" % (machineIndex, virusIndex, virusIndex)
+            machineHTML += """<div class="" id="Machine%s_Virus%s" style="background: #26a815"><center>Virus%s</center></div>\n<br>\n""" % (machineIndex, virusIndex, virusIndex)
         machineHTML += "</div>"
     functions = ""
     interval = "setInterval(function() {"
