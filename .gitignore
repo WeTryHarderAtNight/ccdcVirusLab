@@ -1,6 +1,7 @@
 config.py
 .idea
 servers.csv
+done.txt
 target
 virus0
 __pycache__/

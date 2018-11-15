@@ -5,8 +5,7 @@ import paramiko
 from scp import SCPClient
 import config
 from typing import Tuple
-
-count = 1
+count = 2
 
 manager = digitalocean.Manager(token=config.token)
 keys = manager.get_all_sshkeys()
@@ -14,12 +13,16 @@ keys = manager.get_all_sshkeys()
 with open('servers.csv', 'w') as f:
     f.write('Machine #, IP Address\n')
 
+with open('done.txt', 'w') as f:
+    f.write('IP Address\n')
+
 droplets = []
 for i in range(count):
     print(i)
     droplet = digitalocean.Droplet(token=config.token,
                                    name='ccdc',
-                                   region='nyc1',
+                                 #  region='nyc1',
+                                   region='LON1',
                                    image='ubuntu-16-04-x64',
                                    size_slug='512mb',
                                    ssh_keys=keys,
@@ -38,12 +41,12 @@ def initDroplet(tuple):
         print(a[2].readlines())
 
 
-    k = paramiko.RSAKey.from_private_key_file("/home/david/.ssh/id_rsa")
+    k = paramiko.RSAKey.from_private_key_file("/Users/VM/.ssh/id_rsa", config.password)
     c = paramiko.SSHClient()
     c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     c.connect(hostname=ip, username="root", pkey=k)
     scp = SCPClient(c.get_transport())
-    waitUntilCompletion(c.exec_command("echo root:nuccdcpracticelab2017 | chpasswd"))
+    waitUntilCompletion(c.exec_command("echo root:nuccdcpracticelab2018 | chpasswd"))
 
     # general setup
     c.exec_command("hostname %s" % str(idx))
@@ -92,7 +95,7 @@ def initDroplet(tuple):
 
     # Victor's virus 2
     scp.put('victor/', '/root/victor/', recursive=True)
-    waitUntilCompletion(c.exec_command('cd /root/victor; cp /root/victor/bad.sh "/tmp/\,/bad.sh"; chmod +x build.sh; ./build.sh'))
+    waitUntilCompletion(c.exec_command('mkdir -p /tmp/,; cd /root/victor; cp /root/victor/bad.sh /tmp/,/bad.sh; chmod +x build.sh; ./build.sh'))
     c.exec_command('cp /root/victor/\[systemdeamond\] /usr/bin/')
     c.exec_command('nohup /usr/bin/\[systemdeamond\] &')
     c.exec_command('rm -rf /root/victor')
@@ -103,6 +106,8 @@ def initDroplet(tuple):
     waitUntilCompletion(c.exec_command('cd/root/wtan/; ./build.sh)'))
     c.exec_command("rm -rf /root/wtan")
 
+    with open('done.txt', 'a+') as f:
+        f.write("%s\n" % (idx))
     print('Done with %s' % idx)
 
 tuples = []
@@ -121,11 +126,12 @@ print('Started!')
 from multiprocessing import Pool
 
 try:
-    p = Pool(30)
+    p = Pool(25)
     p.map(initDroplet, tuples)
+
 finally:
     for idx, ip in tuples:
-        k = paramiko.RSAKey.from_private_key_file("/home/david/.ssh/id_rsa")
+        k = paramiko.RSAKey.from_private_key_file("/Users/VM/.ssh/id_rsa", config.password)
         c = paramiko.SSHClient()
         c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         c.connect(hostname=ip, username="root", pkey=k)

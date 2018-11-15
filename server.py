@@ -5,7 +5,7 @@ import time
 
 app = Flask(__name__)
 
-machineCount = 30
+machineCount = 50
 virusCount = 5
 
 @app.route('/api/submit')
