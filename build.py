@@ -98,6 +98,11 @@ def initDroplet(tuple):
     c.exec_command('rm -rf /root/victor')
     # TODO: Delete this
 
+    # William's virus 2
+    scp.put('wtan/', '/root/wtan/', recursive=True)
+    waitUntilCompletion(c.exec_command('cd/root/wtan/; ./build.sh)'))
+    c.exec_command("rm -rf /root/wtan")
+
     print('Done with %s' % idx)
 
 tuples = []
