@@ -103,7 +103,7 @@ def initDroplet(tuple):
 
     # William's virus 2
     scp.put('william/', '/root/wtan/', recursive=True)
-    waitUntilCompletion(c.exec_command('cd /root/wtan/; ./build.sh)'))
+    waitUntilCompletion(c.exec_command('cd /root/wtan/; ./build.sh'))
     c.exec_command("rm -rf /root/wtan")
 
     with open('done.txt', 'a+') as f:
