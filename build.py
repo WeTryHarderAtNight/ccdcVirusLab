@@ -5,12 +5,19 @@ import paramiko
 from scp import SCPClient
 from config import Config
 from typing import Tuple
-count = 1
 
-# Opens "config_file" to read DigitalOcean token 
+'''
+config module:
+This is basically a text file with a bunch of key-value pairs.
+Example:
+token: 'abcdef123456abcdef'
+'''
+
+# Opens "config_file" to read data
 config_file = open('/home/bro/config_file')
 conf = Config(config_file)
 token = conf.token
+count = conf.count
 
 # Grab ssh keys for use
 manager = digitalocean.Manager(token=conf.token)
@@ -41,7 +48,7 @@ for i in range(count):
 
 # Wait for the droplets to set up
 # Increase this to ~5 minutes before spinning up a lot (~30) of droplets
-time.sleep(120)
+time.sleep(300)
 
 # Function for installing malware onto droplet
 def initDroplet(tuple):

