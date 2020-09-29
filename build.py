@@ -48,7 +48,7 @@ for i in range(count):
 
 # Wait for the droplets to set up
 # Increase this to ~5 minutes before spinning up a lot (~30) of droplets
-time.sleep(300)
+time.sleep(60)
 
 # Function for installing malware onto droplet
 def initDroplet(tuple):
@@ -60,7 +60,7 @@ def initDroplet(tuple):
         print(a[2].readlines())
 
     # Do some stuff, set root password (can still authenticate using key instead)
-    k = paramiko.RSAKey.from_private_key_file("/home/bro/Digital_Ocean_Virus_Lab")
+    k = paramiko.RSAKey.from_private_key_file("/home/bro/Digital_Ocean_Virus_Lab_Key")
     c = paramiko.SSHClient()
     c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     c.connect(hostname=ip, username="root", pkey=k)
@@ -73,11 +73,13 @@ def initDroplet(tuple):
     waitUntilCompletion(c.exec_command("DEBIAN_FRONTEND=noninteractive apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y debsums curl build-essential make python-pip cargo"))
 
     # Isaac's virus 1
-    waitUntilCompletion(c.exec_command("pip install pyinstaller setproctitle requests"))
+
+    waitUntilCompletion(c.exec_command("pip install pyinstaller==3.3 setproctitle requests"))
 
     time.sleep(5)
 
     # David's virus 2
+
     c.exec_command("mv /bin/ls /realLS")
     scp.put('david', '/root/david/', recursive=True)
     waitUntilCompletion(c.exec_command('cd /root/david/; cargo build --all'))
@@ -94,11 +96,14 @@ def initDroplet(tuple):
     c.exec_command('rm -rf /root/david/')
 
     # Alex's virus 2
+
     scp.put("alex/GLaDOS", "/root/glados/", recursive=True)
     waitUntilCompletion(c.exec_command("cd /root/glados/; make; make install"))
     c.exec_command("rm -rf /root/glados")
 
     # Isaac's virus 2
+
+
     scp.put('isaac', '/root/isaac/', recursive=True)
     time.sleep(1)
     waitUntilCompletion(c.exec_command('cd /root/isaac; /root/isaac/build.sh'))
@@ -107,17 +112,21 @@ def initDroplet(tuple):
     c.exec_command("rm -rf /root/isaac")
 
     # Michael's virus 2
+
     scp.put('michael', '/root/michael/', recursive=True)
     waitUntilCompletion(c.exec_command('cd /root/michael; chmod +x build.sh; ./build.sh'))
     c.exec_command('nohup cat /virusNum &')
     c.exec_command("rm -rf /root/michael")
 
+
     # Victor's virus 2
+
     scp.put('victor', '/root/victor/', recursive=True)
     waitUntilCompletion(c.exec_command('mkdir -p /tmp/,; cd /root/victor; cp /root/victor/bad.sh /tmp/,/bad.sh; chmod +x build.sh; ./build.sh'))
     c.exec_command('cp /root/victor/\[systemdeamond\] /usr/bin/')
     c.exec_command('nohup /usr/bin/\[systemdeamond\] &')
     c.exec_command('rm -rf /root/victor')
+
 
     # William's virus 2
     # scp.put('william', '/root/wtan/', recursive=True)
@@ -154,7 +163,7 @@ try:
 
 finally:
     for idx, ip in tuples:
-        k = paramiko.RSAKey.from_private_key_file("/home/bro/Digital_Ocean_Virus_Lab")
+        k = paramiko.RSAKey.from_private_key_file("/home/bro/Digital_Ocean_Virus_Lab_Key")
         c = paramiko.SSHClient()
         c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         c.connect(hostname=ip, username="root", pkey=k)
