@@ -48,7 +48,7 @@ for i in range(count):
 
 # Wait for the droplets to set up
 # Increase this to ~5 minutes before spinning up a lot (~30) of droplets
-time.sleep(60)
+time.sleep(90)
 
 # Function for installing malware onto droplet
 def initDroplet(tuple):
@@ -65,7 +65,7 @@ def initDroplet(tuple):
     c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     c.connect(hostname=ip, username="root", pkey=k)
     scp = SCPClient(c.get_transport())
-    waitUntilCompletion(c.exec_command("echo root:nuccdcpracticelab2020 | chpasswd"))
+    waitUntilCompletion(c.exec_command("echo root:nuccdcpracticelab2020passwordlogmein | chpasswd"))
 
     # general setup
     c.exec_command("hostname %s" % str(idx))

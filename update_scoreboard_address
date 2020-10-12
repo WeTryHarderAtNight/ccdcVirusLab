@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Changes the scoreboard IP in the viruses
-# TODO: Use a regex instead of leaving x.x.x.x as a placeholder in the viruses
 
 sed -r -i "s/\b[0-9]{1,3}\.\b[0-9]{1,3}\.\b[0-9]{1,3}\.\b[0-9]{1,3}/$1/g" alex/GLaDOS/GLaDOS.c
 sed -r -i "s/\b[0-9]{1,3}\.\b[0-9]{1,3}\.\b[0-9]{1,3}\.\b[0-9]{1,3}/$1/g" david/virus.rs
